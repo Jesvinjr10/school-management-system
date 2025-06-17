@@ -78,15 +78,11 @@ export default function StudentList() {
 
   return (
     <div className="container mt-4">
-      {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <h2 className="d-flex align-items-center">
           <i className="bi bi-people-fill me-2"></i> Student List
         </h2>
-
-        {/* Search + Add */}
         <div className="d-flex flex-wrap gap-2">
-          {/* Search Input with Icon */}
           <div className="input-group">
             <span className="input-group-text bg-white">
               <i className="bi bi-search"></i>
@@ -99,15 +95,13 @@ export default function StudentList() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-
-          {/* Add Student Button */}
           <button className="btn btn-primary" onClick={() => openModal()}>
             <i className="bi bi-plus-circle me-1"></i> Add Student
           </button>
         </div>
       </div>
 
-      {/* Table Section */}
+      {/* Table */}
       <div className="table-responsive">
         <table className="table table-bordered table-striped">
           <thead className="table-dark">

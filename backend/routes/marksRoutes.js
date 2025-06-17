@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// GET all marks with joined names and classes
 router.get('/', (req, res) => {
   const sql = `
     SELECT m.id, m.student_id, s.name AS student_name, s.class AS student_class,
@@ -18,7 +17,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// CREATE a new mark
+// CREATE
 router.post('/', (req, res) => {
   const { student_id, teacher_id, subject, marks } = req.body;
   const sql = 'INSERT INTO marks (student_id, teacher_id, subject, marks) VALUES (?, ?, ?, ?)';
@@ -28,7 +27,7 @@ router.post('/', (req, res) => {
   });
 });
 
-// UPDATE an existing mark
+// UPDATE 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const { student_id, teacher_id, subject, marks } = req.body;
@@ -39,7 +38,7 @@ router.put('/:id', (req, res) => {
   });
 });
 
-// DELETE a mark
+// DELETE 
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
   db.query('DELETE FROM marks WHERE id=?', [id], (err) => {
