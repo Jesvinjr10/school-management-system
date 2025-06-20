@@ -4,10 +4,10 @@ require('dotenv').config();
 
 
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  host: process.env.DB_HOST=db4free.net,
+  user: process.env.DB_USER=jesvin,
+  password: process.env.DB_PASSWORD=jesvin2701,
+  database: process.env.DB_NAME=school
 });
 
 connection.connect((err) => {
