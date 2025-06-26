@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
@@ -13,15 +13,15 @@ export default function MarksList() {
 
   const API_URL = process.env.REACT_APP_API_URL;
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     axios.get(`${API_URL}/marks`).then(res => setMarks(res.data));
     axios.get(`${API_URL}/students`).then(res => setStudents(res.data));
     axios.get(`${API_URL}/teachers`).then(res => setTeachers(res.data));
-  };
+  }, [API_URL]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const openModal = (mark = null) => {
     if (mark) {
@@ -146,7 +146,10 @@ export default function MarksList() {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Student</Form.Label>
-              <Form.Select value={form.student_id} onChange={e => setForm({ ...form, student_id: e.target.value })}>
+              <Form.Select
+                value={form.student_id}
+                onChange={(e) => setForm({ ...form, student_id: e.target.value })}
+              >
                 <option value="">Select Student</option>
                 {students.map(s => (
                   <option key={s.id} value={s.id}>{s.name} ({s.class})</option>
@@ -157,7 +160,7 @@ export default function MarksList() {
               <Form.Label>Subject</Form.Label>
               <Form.Control
                 value={form.subject}
-                onChange={e => setForm({ ...form, subject: e.target.value })}
+                onChange={(e) => setForm({ ...form, subject: e.target.value })}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -165,12 +168,15 @@ export default function MarksList() {
               <Form.Control
                 type="number"
                 value={form.marks}
-                onChange={e => setForm({ ...form, marks: e.target.value })}
+                onChange={(e) => setForm({ ...form, marks: e.target.value })}
               />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Teacher</Form.Label>
-              <Form.Select value={form.teacher_id} onChange={e => setForm({ ...form, teacher_id: e.target.value })}>
+              <Form.Select
+                value={form.teacher_id}
+                onChange={(e) => setForm({ ...form, teacher_id: e.target.value })}
+              >
                 <option value="">Select Teacher</option>
                 {teachers.map(t => (
                   <option key={t.id} value={t.id}>{t.name}</option>
@@ -181,7 +187,9 @@ export default function MarksList() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-          <Button variant="success" onClick={handleSubmit}>{editingMarkId ? 'Update' : 'Add'}</Button>
+          <Button variant="success" onClick={handleSubmit}>
+            {editingMarkId ? 'Update' : 'Add'}
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

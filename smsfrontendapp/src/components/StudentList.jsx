@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import '../styles/StudentList.css';
 
@@ -12,33 +12,36 @@ export default function StudentList() {
 
   const API_URL = process.env.REACT_APP_API_URL;
 
+  const fetchStudents = useCallback(() => {
+    axios.get(`${API_URL}/students`).then((res) => {
+      setStudents(res.data);
+      setFilteredStudents(res.data);
+    });
+  }, [API_URL]);
+
+  const filterStudents = useCallback(
+    (query) => {
+      if (!query) {
+        setFilteredStudents(students);
+      } else {
+        const filtered = students.filter((s) =>
+          s.name.toLowerCase().includes(query.toLowerCase()) ||
+          s.class.toLowerCase().includes(query.toLowerCase())
+        );
+        setFilteredStudents(filtered);
+      }
+    },
+    [students]
+  );
+
+
   useEffect(() => {
     fetchStudents();
-  }, []);
+  }, [fetchStudents]);
 
   useEffect(() => {
     filterStudents(searchQuery);
-  }, [students, searchQuery]);
-
-  const fetchStudents = () => {
-    axios.get(`${API_URL}/students`)
-      .then(res => {
-        setStudents(res.data);
-        setFilteredStudents(res.data);
-      });
-  };
-
-  const filterStudents = (query) => {
-    if (!query) {
-      setFilteredStudents(students);
-    } else {
-      const filtered = students.filter(s =>
-        s.name.toLowerCase().includes(query.toLowerCase()) ||
-        s.class.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredStudents(filtered);
-    }
-  };
+  }, [students, searchQuery, filterStudents]);
 
   const openModal = (student = null) => {
     if (student) {
@@ -73,7 +76,7 @@ export default function StudentList() {
   const deleteStudent = (id) => {
     if (window.confirm('Are you sure you want to delete this student?')) {
       axios.delete(`${API_URL}/students/${id}`).then(() => {
-        setStudents(students.filter(s => s.id !== id));
+        setStudents((prev) => prev.filter((s) => s.id !== id));
       });
     }
   };
@@ -148,7 +151,7 @@ export default function StudentList() {
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
           onClick={closeModal}
         >
-          <div className="modal-dialog" onClick={e => e.stopPropagation()}>
+          <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">{editingStudent ? 'Edit Student' : 'Add Student'}</h5>

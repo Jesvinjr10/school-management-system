@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import '../styles/TeacherList.css';
 
@@ -12,32 +12,36 @@ export default function TeacherList() {
 
   const API_URL = process.env.REACT_APP_API_URL;
 
-  useEffect(() => {
-    fetchTeachers();
-  }, []);
 
-  useEffect(() => {
-    filterTeachers(searchQuery);
-  }, [teachers, searchQuery]);
-
-  const fetchTeachers = () => {
-    axios.get(`${API_URL}/teachers`).then(res => {
+  const fetchTeachers = useCallback(() => {
+    axios.get(`${API_URL}/teachers`).then((res) => {
       setTeachers(res.data);
       setFilteredTeachers(res.data);
     });
-  };
+  }, [API_URL]);
 
-  const filterTeachers = (query) => {
-    if (!query) {
-      setFilteredTeachers(teachers);
-    } else {
-      const filtered = teachers.filter(t =>
-        t.name.toLowerCase().includes(query.toLowerCase()) ||
-        t.subject.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredTeachers(filtered);
-    }
-  };
+  const filterTeachers = useCallback(
+    (query) => {
+      if (!query) {
+        setFilteredTeachers(teachers);
+      } else {
+        const filtered = teachers.filter((t) =>
+          t.name.toLowerCase().includes(query.toLowerCase()) ||
+          t.subject.toLowerCase().includes(query.toLowerCase())
+        );
+        setFilteredTeachers(filtered);
+      }
+    },
+    [teachers]
+  );
+
+  useEffect(() => {
+    fetchTeachers();
+  }, [fetchTeachers]);
+
+  useEffect(() => {
+    filterTeachers(searchQuery);
+  }, [teachers, searchQuery, filterTeachers]);
 
   const openModal = (teacher = null) => {
     if (teacher) {
@@ -72,7 +76,7 @@ export default function TeacherList() {
   const deleteTeacher = (id) => {
     if (window.confirm('Are you sure you want to delete this teacher?')) {
       axios.delete(`${API_URL}/teachers/${id}`).then(() => {
-        setTeachers(teachers.filter(t => t.id !== id));
+        setTeachers((prev) => prev.filter((t) => t.id !== id));
       });
     }
   };
@@ -145,7 +149,7 @@ export default function TeacherList() {
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
           onClick={closeModal}
         >
-          <div className="modal-dialog" onClick={e => e.stopPropagation()}>
+          <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">{editingTeacher ? 'Edit Teacher' : 'Add Teacher'}</h5>
