@@ -10,6 +10,8 @@ export default function StudentList() {
   const [editingStudent, setEditingStudent] = useState(null);
   const [formData, setFormData] = useState({ name: '', class: '' });
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     fetchStudents();
   }, []);
@@ -19,7 +21,7 @@ export default function StudentList() {
   }, [students, searchQuery]);
 
   const fetchStudents = () => {
-    axios.get('http://localhost:3001/students')
+    axios.get(`${API_URL}/students`)
       .then(res => {
         setStudents(res.data);
         setFilteredStudents(res.data);
@@ -59,8 +61,8 @@ export default function StudentList() {
     if (!formData.name || !formData.class) return;
 
     const req = editingStudent
-      ? axios.put(`http://localhost:3001/students/${editingStudent.id}`, formData)
-      : axios.post('http://localhost:3001/students', formData);
+      ? axios.put(`${API_URL}/students/${editingStudent.id}`, formData)
+      : axios.post(`${API_URL}/students`, formData);
 
     req.then(() => {
       fetchStudents();
@@ -70,7 +72,7 @@ export default function StudentList() {
 
   const deleteStudent = (id) => {
     if (window.confirm('Are you sure you want to delete this student?')) {
-      axios.delete(`http://localhost:3001/students/${id}`).then(() => {
+      axios.delete(`${API_URL}/students/${id}`).then(() => {
         setStudents(students.filter(s => s.id !== id));
       });
     }

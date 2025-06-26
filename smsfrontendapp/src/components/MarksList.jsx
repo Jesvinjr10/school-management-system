@@ -11,14 +11,16 @@ export default function MarksList() {
   const [form, setForm] = useState({ student_id: '', subject: '', marks: '', teacher_id: '' });
   const [search, setSearch] = useState('');
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = () => {
-    axios.get('http://localhost:3001/marks').then(res => setMarks(res.data));
-    axios.get('http://localhost:3001/students').then(res => setStudents(res.data));
-    axios.get('http://localhost:3001/teachers').then(res => setTeachers(res.data));
+    axios.get(`${API_URL}/marks`).then(res => setMarks(res.data));
+    axios.get(`${API_URL}/students`).then(res => setStudents(res.data));
+    axios.get(`${API_URL}/teachers`).then(res => setTeachers(res.data));
   };
 
   const openModal = (mark = null) => {
@@ -39,8 +41,8 @@ export default function MarksList() {
 
   const handleSubmit = () => {
     const url = editingMarkId
-      ? `http://localhost:3001/marks/${editingMarkId}`
-      : 'http://localhost:3001/marks';
+      ? `${API_URL}/marks/${editingMarkId}`
+      : `${API_URL}/marks`;
     const method = editingMarkId ? axios.put : axios.post;
 
     method(url, form)
@@ -52,7 +54,7 @@ export default function MarksList() {
   };
 
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:3001/marks/${id}`)
+    axios.delete(`${API_URL}/marks/${id}`)
       .then(() => {
         fetchData();
       })

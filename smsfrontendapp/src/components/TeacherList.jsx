@@ -10,6 +10,8 @@ export default function TeacherList() {
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [formData, setFormData] = useState({ name: '', subject: '' });
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     fetchTeachers();
   }, []);
@@ -19,7 +21,7 @@ export default function TeacherList() {
   }, [teachers, searchQuery]);
 
   const fetchTeachers = () => {
-    axios.get('http://localhost:3001/teachers').then(res => {
+    axios.get(`${API_URL}/teachers`).then(res => {
       setTeachers(res.data);
       setFilteredTeachers(res.data);
     });
@@ -58,8 +60,8 @@ export default function TeacherList() {
     if (!formData.name || !formData.subject) return;
 
     const request = editingTeacher
-      ? axios.put(`http://localhost:3001/teachers/${editingTeacher.id}`, formData)
-      : axios.post('http://localhost:3001/teachers', formData);
+      ? axios.put(`${API_URL}/teachers/${editingTeacher.id}`, formData)
+      : axios.post(`${API_URL}/teachers`, formData);
 
     request.then(() => {
       fetchTeachers();
@@ -69,7 +71,7 @@ export default function TeacherList() {
 
   const deleteTeacher = (id) => {
     if (window.confirm('Are you sure you want to delete this teacher?')) {
-      axios.delete(`http://localhost:3001/teachers/${id}`).then(() => {
+      axios.delete(`${API_URL}/teachers/${id}`).then(() => {
         setTeachers(teachers.filter(t => t.id !== id));
       });
     }
